@@ -76,12 +76,20 @@ scene.add(cloudSphere);
 camera.position.set(0, 0, 50);
 camera.lookAt(0, 0, 0);
 
-// Animation Loop with Slower Cloud Speed
+// Animation Loop with Smoother Speed
 const clock = new THREE.Clock(); // Initialize the clock
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta(); // Time elapsed since the last frame
-  cloudUniforms.uTime.value += delta * 0.2; // Slower cloud movement
+
+  // Get elapsed time since the last frame
+  const delta = clock.getDelta(); // Time elapsed in seconds
+
+  // Limit delta to prevent sudden large jumps (just in case)
+  const adjustedDelta = Math.min(delta, 0.033); // ~30 FPS cap for safety
+
+  // Adjust cloud speed to ensure smoother motion
+  cloudUniforms.uTime.value += adjustedDelta * 0.3; // Adjust speed multiplier if needed
+
   renderer.render(scene, camera);
 }
 animate();
