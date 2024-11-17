@@ -76,15 +76,16 @@ scene.add(cloudSphere);
 camera.position.set(0, 0, 50);
 camera.lookAt(0, 0, 0);
 
-// Animation Loop with Consistent Speed
+// Animation Loop with Slower Cloud Speed
 const clock = new THREE.Clock(); // Initialize the clock
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta(); // Time elapsed since the last frame
-  cloudUniforms.uTime.value += delta * 0.5; // Adjust cloud movement speed
+  cloudUniforms.uTime.value += delta * 0.2; // Slower cloud movement
   renderer.render(scene, camera);
 }
 animate();
+
 
 // Handle Window Resize
 window.addEventListener("resize", () => {
