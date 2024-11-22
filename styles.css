@@ -1,12 +1,13 @@
-/* Background for Light Mode */
 #light-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0; /* Ensure this stays behind text/UI */
+  z-index: 0;
+  background: black; /* Fallback color */
 }
+
 
 /* Framer Text/UI Elements */
 .text-elements {
