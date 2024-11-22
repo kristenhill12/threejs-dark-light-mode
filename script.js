@@ -1,9 +1,14 @@
-// Scene, Camera, Renderer Setup
+// Light Mode Background and Animation
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+  antialias: true, // Enable GPU-friendly anti-aliasing
+  powerPreference: "high-performance", // Optimize for performance
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+
+// Append the renderer to the light mode container
+document.getElementById("light-background").appendChild(renderer.domElement);
 
 // Vertex Shader
 const cloudVertexShader = `
@@ -14,7 +19,7 @@ const cloudVertexShader = `
   }
 `;
 
-// Fragment Shader
+// Fragment Shader for Light Mode Clouds
 const cloudFragmentShader = `
   varying vec2 vUv;
   uniform float uTime;
@@ -49,53 +54,42 @@ const cloudFragmentShader = `
   void main() {
     vec2 p = vUv * 2.0 - 1.0;
     float clouds = fbm(p * 3.0 + uTime * 0.05);
-    clouds = smoothstep(0.3, 0.8, clouds);
-    vec3 skyColor = mix(vec3(0.6, 0.75, 0.9), vec3(1.0), clouds);
+    clouds = smoothstep(0.3, 0.8, clouds); // Adjust cloud density
+    vec3 skyColor = mix(vec3(0.6, 0.75, 0.9), vec3(0.9, 0.95, 1.0), clouds); // Adjust colors here
     gl_FragColor = vec4(skyColor, 1.0);
   }
 `;
 
-// Uniforms and Material
+// Uniforms for Cloud Animation
 const cloudUniforms = {
   uTime: { value: 0 },
 };
 
+// Sphere Geometry for Light Mode Background
+const sphereGeometry = new THREE.SphereGeometry(400, 32, 32); // Optimized geometry for performance
 const cloudMaterial = new THREE.ShaderMaterial({
   vertexShader: cloudVertexShader,
   fragmentShader: cloudFragmentShader,
   uniforms: cloudUniforms,
-  side: THREE.BackSide, // Render inside of the sphere
+  side: THREE.BackSide, // Render inside the sphere
 });
-
-// Large Sphere for the Background
-const sphereGeometry = new THREE.SphereGeometry(500, 64, 64);
 const cloudSphere = new THREE.Mesh(sphereGeometry, cloudMaterial);
 scene.add(cloudSphere);
 
-// Camera Position
-camera.position.set(0, 0, 50);
-camera.lookAt(0, 0, 0);
-
-// Animation Loop with Smoother Speed
-const clock = new THREE.Clock(); // Initialize the clock
+// Animation Loop for Light Mode
+const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
 
-  // Get elapsed time since the last frame
-  const delta = clock.getDelta(); // Time elapsed in seconds
-
-  // Limit delta to prevent sudden large jumps (just in case)
-  const adjustedDelta = Math.min(delta, 0.033); // ~30 FPS cap for safety
-
-  // Adjust cloud speed to ensure smoother motion
-  cloudUniforms.uTime.value += adjustedDelta * 0.3; // Adjust speed multiplier if needed
+  // Throttle animation speed to reduce lag
+  const delta = clock.getDelta();
+  cloudUniforms.uTime.value += delta * 0.2;
 
   renderer.render(scene, camera);
 }
 animate();
 
-
-// Handle Window Resize
+// Resize Handler
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();

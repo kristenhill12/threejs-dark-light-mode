@@ -1,5 +1,16 @@
-body {
-    margin: 0;
-    overflow: hidden;
-  }
-  
+/* Light Mode Background */
+#light-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* Ensure the background is behind all UI elements */
+}
+
+/* Framer UI/Text Elements */
+.text-elements {
+  position: relative;
+  z-index: 1; /* Ensure text is above the background */
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth text animation */
+}
