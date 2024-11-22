@@ -1,16 +1,16 @@
-/* Light Mode Background */
+/* Background for Light Mode */
 #light-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0; /* Ensure the background is behind all UI elements */
+  z-index: 0; /* Ensure this stays behind text/UI */
 }
 
-/* Framer UI/Text Elements */
+/* Framer Text/UI Elements */
 .text-elements {
   position: relative;
-  z-index: 1; /* Ensure text is above the background */
-  transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth text animation */
+  z-index: 1; /* Ensure this stays above the background */
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth animations */
 }
