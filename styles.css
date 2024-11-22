@@ -1,47 +1,16 @@
-/* Light Mode Background Container */
+/* General Body Styling */
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Background Container */
 #light-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0;
-  background: #b3d9ff; /* Fallback pastel blue */
-  background-image: url('fallback-image.jpg'); /* Fallback image */
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-/* Preloading Spinner */
-body.loading #light-background {
-  display: none; /* Hide Three.js background while loading */
-}
-
-body.loading .spinner {
-  display: block; /* Show spinner during preload */
-}
-
-.spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 5px solid #3498db;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Framer Text Elements */
-.text-elements {
-  will-change: opacity, transform; /* Optimize for transitions */
-  z-index: 1; /* Ensure text appears above the background */
-  position: relative;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: -1; /* Ensure it's always behind other elements */
+  background: #A3D9FF; /* Fallback light blue color */
 }
