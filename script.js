@@ -1,4 +1,3 @@
-// Three.js Scene Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({
@@ -17,7 +16,7 @@ const cloudVertexShader = `
   }
 `;
 
-// Fragment Shader (Brighter Sky)
+// Fragment Shader (Bright Blue Sky with White Clouds)
 const cloudFragmentShader = `
   varying vec2 vUv;
   uniform float uTime;
@@ -53,8 +52,8 @@ const cloudFragmentShader = `
     vec2 p = vUv * 2.0 - 1.0;
     float clouds = fbm(p * 3.0 + uTime * 0.05);
     clouds = smoothstep(0.4, 0.9, clouds);
-    vec3 baseColor = vec3(0.75, 0.9, 1.0); // Brighter blue
-    vec3 highlightColor = vec3(1.0, 0.95, 0.85); // Warm highlights
+    vec3 baseColor = vec3(0.75, 0.9, 1.0); // Brighter blue for sky
+    vec3 highlightColor = vec3(1.0, 1.0, 1.0); // White for clouds
     vec3 skyColor = mix(baseColor, highlightColor, clouds);
     gl_FragColor = vec4(skyColor, 1.0);
   }
