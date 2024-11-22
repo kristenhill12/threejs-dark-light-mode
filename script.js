@@ -1,3 +1,4 @@
+// Scene Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({
@@ -5,7 +6,11 @@ const renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById("light-background").appendChild(renderer.domElement);
+
+// Append renderer only if not already attached
+if (!renderer.domElement.parentNode) {
+  document.getElementById("light-background").appendChild(renderer.domElement);
+}
 
 // Vertex Shader
 const cloudVertexShader = `
@@ -16,7 +21,7 @@ const cloudVertexShader = `
   }
 `;
 
-// Fragment Shader (Bright Blue Sky with White Clouds)
+// Fragment Shader
 const cloudFragmentShader = `
   varying vec2 vUv;
   uniform float uTime;
@@ -53,7 +58,7 @@ const cloudFragmentShader = `
     float clouds = fbm(p * 3.0 + uTime * 0.05);
     clouds = smoothstep(0.4, 0.9, clouds);
     vec3 baseColor = vec3(0.75, 0.9, 1.0); // Brighter blue for sky
-    vec3 highlightColor = vec3(1.0, 1.0, 1.0); // White for clouds
+    vec3 highlightColor = vec3(1.0, 1.0, 1.0); // Pure white for clouds
     vec3 skyColor = mix(baseColor, highlightColor, clouds);
     gl_FragColor = vec4(skyColor, 1.0);
   }
@@ -64,7 +69,7 @@ const cloudUniforms = {
   uTime: { value: 0 },
 };
 
-// Sphere Geometry and Shader Material
+// Create Sphere
 const sphereGeometry = new THREE.SphereGeometry(400, 32, 32);
 const cloudMaterial = new THREE.ShaderMaterial({
   vertexShader: cloudVertexShader,
@@ -75,17 +80,30 @@ const cloudMaterial = new THREE.ShaderMaterial({
 const cloudSphere = new THREE.Mesh(sphereGeometry, cloudMaterial);
 scene.add(cloudSphere);
 
-// Animation Loop
+// Preload Spinner
+document.body.classList.add("loading");
+renderer.domElement.onload = () => {
+  document.body.classList.remove("loading");
+};
+
+// Throttled Animation Loop
+let lastRenderTime = 0;
 const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
-  cloudUniforms.uTime.value += delta * 0.2; // Slower animation for calm effect
-  renderer.render(scene, camera);
+
+  // Throttle rendering to ~30 FPS
+  const now = performance.now();
+  if (now - lastRenderTime > 33) {
+    lastRenderTime = now;
+    const delta = clock.getDelta();
+    cloudUniforms.uTime.value += delta * 0.2; // Slow cloud motion
+    renderer.render(scene, camera);
+  }
 }
 animate();
 
-// Resize Handling
+// Smooth Resizing
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
