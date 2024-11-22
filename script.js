@@ -50,7 +50,7 @@ const cloudFragmentShader = `
     vec2 p = vUv * 2.0 - 1.0;
     float clouds = fbm(p * 3.0 + uTime * 0.05);
     clouds = smoothstep(0.3, 0.8, clouds);
-    vec3 skyColor = mix(vec3(0.8, 0.9, 1.0), vec3(1.0, 1.0, 0.95), clouds);
+    vec3 skyColor = mix(vec3(0.7, 0.85, 1.0), vec3(1.0), clouds);
     gl_FragColor = vec4(skyColor, 1.0);
   }
 `;
