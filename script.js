@@ -15,29 +15,46 @@ const renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-
-// Attach Renderer to the Light Background Container
 document.getElementById("light-background").appendChild(renderer.domElement);
 
-// Create Rotating Stars
-function createStar() {
-  const geometry = new THREE.SphereGeometry(Math.random() * 0.05 + 0.02, 24, 24);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const star = new THREE.Mesh(geometry, material);
+// Cloud Texture (optional if you want clouds)
+const cloudTextureLoader = new THREE.TextureLoader();
+const cloudTexture = cloudTextureLoader.load(
+  "https://cdn.pixabay.com/photo/2016/03/26/13/09/clouds-1282315_960_720.png" // Replace with your own cloud texture
+);
 
-  const [x, y, z] = Array(3)
-    .fill()
-    .map(() => THREE.MathUtils.randFloatSpread(200));
-  star.position.set(x, y, z);
-  scene.add(star);
+// Create Cloud Layers
+function createCloudLayer() {
+  const geometry = new THREE.PlaneGeometry(500, 300, 32, 32);
+  const material = new THREE.MeshBasicMaterial({
+    map: cloudTexture,
+    transparent: true,
+    opacity: 0.5, // Adjust cloud transparency
+  });
+
+  const clouds = new THREE.Mesh(geometry, material);
+  clouds.position.z = -50; // Push clouds further back
+  return clouds;
 }
 
-// Add Multiple Stars for the Sky
-Array(300).fill().forEach(createStar);
+const cloudLayer1 = createCloudLayer();
+cloudLayer1.position.y = 20;
 
-// Animation Loop
+const cloudLayer2 = createCloudLayer();
+cloudLayer2.position.y = -20;
+cloudLayer2.position.x = -10;
+
+scene.add(cloudLayer1, cloudLayer2);
+
+// Animation Loop for Moving Clouds
 function animate() {
-  scene.rotation.y += 0.0005; // Subtle rotation for dynamic motion
+  cloudLayer1.position.x += 0.05; // Adjust for smooth cloud motion
+  cloudLayer2.position.x -= 0.03;
+
+  // Reset position when clouds go out of view
+  if (cloudLayer1.position.x > 100) cloudLayer1.position.x = -100;
+  if (cloudLayer2.position.x < -100) cloudLayer2.position.x = 100;
+
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
